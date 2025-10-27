@@ -1,0 +1,11 @@
+[project]
+name = "teacherease-parents-helper"
+version = "1.0.0"
+description = "Automated grade scraper and email reporter for TeacherEase parent portal"
+requires-python = ">=3.13"
+dependencies = [
+    "beautifulsoup4>=4.14.2",
+    "jinja2>=3.1.6",
+    "playwright>=1.55.0",
+    "python-dotenv>=1.2.1",
+]
