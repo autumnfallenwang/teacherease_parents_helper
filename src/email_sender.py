@@ -276,22 +276,25 @@ class EmailSender:
     def _send_via_smtp(self, subject: str, html_content: str) -> bool:
         """Send email via SMTP (real sending)"""
         try:
+            # Parse recipients (supports comma-separated list)
+            recipients = [r.strip() for r in self.config['recipient'].split(',')]
+
             msg = MIMEMultipart('alternative')
             msg['Subject'] = subject
             msg['From'] = self.config['from_email']
-            msg['To'] = self.config['recipient']
-            
+            msg['To'] = ', '.join(recipients)  # Display all recipients in header
+
             html_part = MIMEText(html_content, 'html')
             msg.attach(html_part)
-            
+
             with smtplib.SMTP(self.config['smtp_server'], self.config['smtp_port']) as server:
                 server.starttls()
                 server.login(self.config['from_email'], self.config['password'])
-                server.send_message(msg)
-            
-            logger.info(f"✅ Email sent to {self.config['recipient']}")
+                server.sendmail(self.config['from_email'], recipients, msg.as_string())
+
+            logger.info(f"✅ Email sent to {', '.join(recipients)}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to send email: {e}")
             return False
